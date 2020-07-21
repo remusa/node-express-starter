@@ -1,9 +1,10 @@
 import bodyParser from 'body-parser'
-import cors from 'cors'
+// import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
 import helmet from 'helmet'
 import db from './data/db'
+import { register, login } from 'routes/users'
 
 dotenv.config()
 
@@ -15,7 +16,7 @@ const app: express.Application = express()
 // SECURITY
 app.use(helmet())
 app.disable('x-powered-by')
-app.use(cors())
+// app.use(cors())
 
 // MIDDLEWARE
 app.use(bodyParser.json())
@@ -27,6 +28,12 @@ app.get('/', (req: express.Request, res: express.Response) => {
 app.get('/api/v1/todos', async (req: express.Request, res: express.Response) => {
   const todos = await db('todo')
   res.json({ todos })
+})
+
+app.post('api/v1/users', async (req: express.Request, res: express.Response) => {
+  const response = await signup(req)
+  res.send(response)
+  // res.json({ message: 'signup' })
 })
 
 app.listen(PORT, () =>

@@ -1,6 +1,6 @@
-// const dotenv = require('dotenv')
+import dotenv from 'dotenv'
 
-// dotenv.config()
+dotenv.config()
 
 // Update with your config settings.
 

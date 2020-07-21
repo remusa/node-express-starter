@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import knex from 'knex'
+import Knex from 'knex'
 import knexfile from '../knexfile'
 
 dotenv.config()
@@ -21,4 +21,4 @@ switch (ENV) {
     break
 }
 
-export = knex(configOptions)
+export = Knex(configOptions)
