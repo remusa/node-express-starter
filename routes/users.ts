@@ -11,17 +11,22 @@ export const register = (req: Request, res: Response, db: Knex.Transaction) => {
 
   const hash = bcrypt.hashSync(password)
 
-  return db.transaction(trx => {
+  db.transaction(trx => {
     trx
       .insert({
         email,
         password: hash,
+        created: new Date(),
       })
       .into('users')
       .returning('email')
       .then(trx.commit)
       .catch(trx.rollback)
   })
+    .then(data => res.json({ user: {
+      email: data.email
+    } }))
+    .catch(err => res.status(400).json(`Unable to register: ${err.message}`))
 }
 
 export const login = (req: Request, res: Response, db: Knex.QueryBuilder) => {
@@ -37,16 +42,17 @@ export const login = (req: Request, res: Response, db: Knex.QueryBuilder) => {
     .then(data => {
       const isValid = bcrypt.compareSync(password, data[0].password)
 
-      if (isValid) {
-        res.json({
-          user: {
-            email: data.email,
-          },
-        })
-      } else {
+      if (!isValid) {
         res.status(400).json('Wrong credentials')
       }
+
+      res.json({
+        user: {
+          email: data.email,
+        },
+      })
     })
+    .catch(err => res.status(400).json(`Unable to login: ${err.message}`))
 }
 
 export const profile = (req: Request, res: Response, db: Knex.QueryBuilder) => {
